@@ -1,6 +1,5 @@
-const jsonfile = require("jsonfile");
-const moment = require("moment");
-const simpleGit = require("simple-git");
+import jsonfile from "jsonfile";
+import moment from "moment";
 
 const path = "./data.json";
 const date = moment().format();
@@ -9,26 +8,7 @@ const data = {
   date: date,
 };
 
-const git = simpleGit();
+jsonfile.writeFile(path, data);
 
-jsonfile.writeFile(path, data, async (err) => {
-  if (err) {
-    console.error("Erro ao escrever o arquivo:", err);
-    return;
-  }
+simpleGit().add([path]).commit(date, {'--date': date}).push();
 
-  console.log("Arquivo salvo com sucesso!");
-
-  try {
-    await git.add(path);
-
-    await git.commit(`update: data.json @ ${date}`);
-
-    console.log("Alterações commitadas com sucesso!");
-
-    // Trecho da imagem adicionado abaixo
-    simpleGit().add([path]).commit(date, { '--date': date }).push();
-  } catch (gitErr) {
-    console.error("Erro ao realizar commit:", gitErr);
-  }
-});
